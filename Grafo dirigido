@@ -1,0 +1,87 @@
+import sys
+
+class Grafo:
+    def __init__(self, num_nodos):
+        self.num_nodos = num_nodos
+        # Crear una matriz de adyacencia inicializada con ceros
+        self.matriz_adyacencia = [[0] * num_nodos for _ in range(num_nodos)]
+
+    def agregar_arista(self, origen, destino, peso):
+        # Asigna el peso a la arista desde el nodo origen al nodo destino
+        self.matriz_adyacencia[origen][destino] = peso
+
+    def mostrar_matriz_adyacencia(self):
+        # Muestra la matriz de adyacencia fila por fila
+        for fila in self.matriz_adyacencia:
+            print(fila)
+
+    def dijkstra(self, origen):
+        # Inicializamos distancias infinitas y el nodo de origen en 0
+        distancias = [sys.maxsize] * self.num_nodos
+        distancias[origen] = 0
+        visitado = [False] * self.num_nodos
+        camino = [-1] * self.num_nodos
+
+        for _ in range(self.num_nodos):
+            # Encuentra el nodo con la menor distancia que no ha sido visitado
+            min_distancia = sys.maxsize
+            nodo_actual = -1
+            for nodo in range(self.num_nodos):
+                if not visitado[nodo] and distancias[nodo] < min_distancia:
+                    min_distancia = distancias[nodo]
+                    nodo_actual = nodo
+
+            # Marca el nodo actual como visitado
+            visitado[nodo_actual] = True
+
+            # Actualiza las distancias de los vecinos del nodo actual
+            for vecino in range(self.num_nodos):
+                peso = self.matriz_adyacencia[nodo_actual][vecino]
+                if peso > 0 and not visitado[vecino]:
+                    nueva_distancia = distancias[nodo_actual] + peso
+                    if nueva_distancia < distancias[vecino]:
+                        distancias[vecino] = nueva_distancia
+                        camino[vecino] = nodo_actual
+
+        # Muestra los resultados
+        print("Nodo Origen:", origen)
+        for nodo in range(self.num_nodos):
+            if distancias[nodo] == sys.maxsize:
+                print(f"Distancia a nodo {nodo}: No alcanzable")
+            else:
+                print(f"Distancia a nodo {nodo}: {distancias[nodo]}")
+                # Muestra el camino al nodo
+                ruta = []
+                actual = nodo
+                while actual != -1:
+                    ruta.insert(0, actual)
+                    actual = camino[actual]
+                print(f"Camino a nodo {nodo}: {' -> '.join(map(str, ruta))}")
+
+# Ejemplo de uso
+num_nodos = 6
+grafo = Grafo(num_nodos)
+
+# Matriz de adyacencia proporcionada
+matriz = [
+    [0, 5, 1, 0, 0, 0],
+    [0, 0, 1, 5, 0, 0],
+    [0, 0, 0, 0, 2, 0],
+    [0, 0, 0, 0, 0, 3],
+    [0, 0, 0, 3, 0, 3],
+    [0, 0, 0, 0, 0, 0]
+]
+
+# Agregar aristas al grafo usando la matriz de adyacencia dada
+for i in range(num_nodos):
+    for j in range(num_nodos):
+        if matriz[i][j] != 0:
+            grafo.agregar_arista(i, j, matriz[i][j])
+
+# Mostrar la matriz de adyacencia
+print("Matriz de Adyacencia:")
+grafo.mostrar_matriz_adyacencia()
+
+# Ejecutar el algoritmo de Dijkstra desde el nodo 0
+print("\nAlgoritmo de Dijkstra desde el nodo 0:")
+grafo.dijkstra(0)
