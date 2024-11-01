@@ -1,0 +1,51 @@
+def camino_mas_corto(grafo, inicio, fin):
+    """
+    Calcula el costo mínimo para viajar del nodo 'inicio' al nodo 'fin'.
+
+    Args:
+        grafo: Diccionario que representa la estructura del grafo.
+        inicio: Nodo inicial.
+        fin: Nodo final.
+
+    Returns:
+        El costo del camino más corto o None si no se puede llegar.
+    """
+
+    costos = {nodo: float('inf') for nodo in grafo}
+    costos[inicio] = 0
+    nodos_visitados = set()
+
+    while nodos_visitados != set(grafo.keys()):
+        nodo_actual = min(
+            (nodo for nodo in grafo if nodo not in nodos_visitados),
+            key=lambda nodo: costos[nodo],
+            default=None
+        )
+
+        if nodo_actual is None:  # Si no hay más nodos por explorar
+            break
+        
+        nodos_visitados.add(nodo_actual)
+
+        for vecino, peso in grafo[nodo_actual].items():
+            nuevo_costo = costos[nodo_actual] + peso
+            if nuevo_costo < costos[vecino]:
+                costos[vecino] = nuevo_costo
+
+    return costos[fin] if costos[fin] != float('inf') else None
+
+# Ejemplo de grafo
+grafo = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'C': 2, 'D': 5},
+    'C': {'D': 1},
+    'D': {}
+}
+inicio = 'A'
+fin = 'D'
+
+distancia_minima = camino_mas_corto(grafo, inicio, fin)
+if distancia_minima is not None:
+    print("El costo mínimo es:", distancia_minima)
+else:
+    print("No hay un camino de", inicio, "a", fin)
