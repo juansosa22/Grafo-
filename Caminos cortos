@@ -1,0 +1,41 @@
+def dijkstra(grafo, inicio, fin):
+  """
+  Encuentra el camino más corto desde el nodo 'inicio' al nodo 'fin' en un grafo.
+
+  Args:
+    grafo: Un diccionario de adyacencia que representa el grafo.
+    inicio: El nodo de partida.
+    fin: El nodo de destino.
+
+  Returns:
+    La distancia del camino más corto o None si no existe un camino.
+  """
+
+  distancias = {nodo: float('inf') for nodo in grafo}
+  distancias[inicio] = 0
+  visitados = set()
+
+  while visitados != set(grafo.keys()):
+    nodo_actual = min((nodo for nodo in grafo if nodo not in visitados), 
+                      key=lambda nodo: distancias[nodo])
+    visitados.add(nodo_actual)
+
+    for vecino, peso in grafo[nodo_actual].items():
+      nueva_distancia = distancias[nodo_actual] + peso
+      if nueva_distancia < distancias[vecino]:
+        distancias[vecino] = nueva_distancia
+
+  return distancias[fin]
+
+# Ejemplo de uso:
+grafo = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'C': 2, 'D': 5},
+    'C': {'D': 1},
+    'D': {}
+}
+inicio = 'A'
+fin = 'D'
+
+distancia_minima = dijkstra(grafo, inicio, fin)
+print("La distancia mínima es:", distancia_minima)
